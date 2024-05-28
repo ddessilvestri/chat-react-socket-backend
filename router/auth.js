@@ -10,7 +10,7 @@ const router = Router();
 
 // create new users
 router.post('/new',[
-    check('username','The name is mandatory').not().isEmpty(),
+    check('name','The name is mandatory').not().isEmpty(),
     check('password','The password is mandatory').not().isEmpty(),
     check('email','The email is mandatory').isEmail(),
     validateFields
