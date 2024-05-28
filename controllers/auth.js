@@ -1,6 +1,7 @@
 const { response } = require("express");
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const { generateJWT } = require("../helpers/jwt");
 
 
 const createUser = async(req,res = response)=>{
@@ -23,9 +24,12 @@ const createUser = async(req,res = response)=>{
     // Save passowrd in DB
     await user.save();
 
+    // TODO : Generate JWT
+    const token = await generateJWT(user.id);
 
     res.json({
-        user
+        user,
+        token
     });
 
 
@@ -40,16 +44,43 @@ const createUser = async(req,res = response)=>{
 }
 
 const login = async(req,res)=>{
-
    
     const {email,password} =req.body;
 
-    res.json({
-        ok:true,
-        msg:'login',
-        email,
-        password
-    })
+    try {
+        const userDB = await User.findOne({email});
+        if(!userDB){
+            return res.status(404).json({
+                ok:false,
+                msg: "Email or password not valid"
+            })
+        }
+        const validPassword = bcrypt.compareSync(password, userDB.password);
+
+        if (!validPassword){
+            return res.status(404).json({
+                ok:false,
+                msg:'Email or password not valid'
+            })
+        }
+
+        const token = await generateJWT(userDB.id);
+
+        res.json({
+            ok:true,
+            user: userDB,
+            token
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'Refer to the administrator'
+        });
+    }
+
+    
 }
 
 
