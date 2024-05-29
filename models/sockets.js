@@ -13,13 +13,14 @@ class Sockets {
         // On connection
         this.io.on('connection', ( socket ) => {
 
-            // Escuchar evento: mensaje-to-server
-            socket.on('mensaje-to-server', ( data ) => {
-                console.log( data );
-                
-                this.io.emit('mensaje-from-server', data );
-            });
-            
+            // TODO : Validate JWT --> if the JWT is not valid go offline
+            // TODO : Know which user is active using the UID
+            // TODO: Emit all the connected user
+            // TODO: Scoket join
+            // TODO: Listen when a client sends a client : personal-message
+            // TODO: Disconnect --> check in the database that the user is offline
+         
+          
         
         });
     }
